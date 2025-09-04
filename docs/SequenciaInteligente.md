@@ -1,11 +1,11 @@
-# Salesforce - Sequência Inteligente (RG9_SequenciaInteligenteService)
+# Salesforce - Sequência Inteligente (SequenceGeneratorService)
 
 ## 1. Introdução
 O componente **Sequência Inteligente** tem como objetivo gerar nomes sequenciais customizados para registros de qualquer objeto Salesforce, de forma centralizada e reutilizável.  
 
 - Permite definir **prefixos customizados** e quantidade fixa de dígitos (10 no padrão atual).  
-- Mantém o controle da sequência em um registro único do objeto **RG9_Reuso__c**.  
-- Pode ser utilizado em qualquer objeto e record type, com ou sem distinção de tipo de caso (Principal ou Secundário).  
+- Mantém o controle da sequência em um registro único do objeto **Generic_Reuse__c**.  
+- Pode ser utilizado em qualquer objeto e record type, com ou sem distinção de tipo de caso (Primary ou Secondary).  
 - É acionado via **Record-Triggered Flow**, tornando sua implementação rápida e sem necessidade de múltiplas triggers.  
 
 ---
@@ -23,16 +23,16 @@ O componente **Sequência Inteligente** tem como objetivo gerar nomes sequenciai
 ## 3. Casos de Uso
 1. **Registro único por record type:**  
    - Cada record type do objeto possui sua sequência própria.  
-   - Ex.: `"Espólio"` → `COP - 0000000001`  
+   - Ex.: `"ProcessTypeA"` → `PRC - 0000000001`  
 
 2. **Registro unificado por objeto:**  
    - Todos os record types compartilham a mesma sequência.  
-   - Ex.: `apiNameRecType = 'Default'` → todos os registros do objeto seguem `COP - 0000000001`, `COP - 0000000002`, ...  
+   - Ex.: `apiNameRecType = 'Default'` → todos os registros do objeto seguem `PRC - 0000000001`, `PRC - 0000000002`, ...  
 
-3. **Casos Pai e Secundário:**  
-   - Permite diferenciar sequência entre registros principais e filhos (ou secundários) usando o campo `Tipo de Caso`.  
-   - Ex.: `Principal` → `COP - 0000000123`  
-          `Secundário` → `CasoFilho - 0000000001`  
+3. **Casos Principal e Secundário:**  
+   - Permite diferenciar sequência entre registros principais e filhos (ou secundários) usando o campo `CaseType`.  
+   - Ex.: `Primary` → `PRC - 0000000123`  
+          `Secondary` → `SUBCASE - 0000000001`  
 
 ---
 
@@ -42,8 +42,8 @@ O componente **Sequência Inteligente** tem como objetivo gerar nomes sequenciai
 |-----------|------|------------|-----------|
 | `apiNameObject` | Text | Sim | API Name do objeto para o qual a sequência será gerada |
 | `apiNameRecType` | Text | Sim | API Name do record type. Para unificar sequência por objeto, use `"Default"` |
-| `tipoDeCaso` | Text | Não | Picklist: `"Principal"` ou `"Secundário"`. Se não informado, assume `"Principal"` |
-| `template` | Text | Sim | Prefixo do registro (ex.: `"COP - "`, `"Caso - "`). Sempre 10 dígitos para a sequência |
+| `caseType` | Text | Não | Picklist: `"Primary"` ou `"Secondary"`. Se não informado, assume `"Primary"` |
+| `template` | Text | Sim | Prefixo do registro (ex.: `"PRC - "`, `"SUBCASE - "`). Sempre 10 dígitos para a sequência |
 
 ---
 
@@ -60,14 +60,14 @@ O componente **Sequência Inteligente** tem como objetivo gerar nomes sequenciai
 - Manter consistência nos **prefixos** e registrar os templates utilizados, para evitar confusão histórica.  
 - Para sequências contínuas entre record types, usar `apiNameRecType = 'Default'`.  
 - Caso altere o prefixo para registros existentes, lembrar que os registros antigos **não são atualizados automaticamente**.  
-- Garantir que os usuários tenham acesso à **classe Apex** e ao **objeto RG9_Reuso__c** via Permission Set.  
+- Garantir que os usuários tenham acesso à **classe Apex** e ao **objeto Generic_Reuse__c** via Permission Set.  
 
 ---
 
 ## 7. Quem Desenvolveu
-- **Equipe:** RG9 - Plataforma Ops  
-- **Desenvolvedor:** Tauã Gentini Ângelo  
-- **Contato:** taua.angelo@wise-otter-5c87va.com  
+- **Equipe:** PlatformOps  
+- **Desenvolvedor:** Nome do Desenvolvedor  
+- **Contato:** email@empresa.com  
 
 ---
 
@@ -75,7 +75,7 @@ O componente **Sequência Inteligente** tem como objetivo gerar nomes sequenciai
 | Versão | Data | Descrição |
 |--------|------|-----------|
 | 1.0 | 2025-09-03 | Primeira versão funcional do `Sequência Inteligente` |
-| 1.1 | 2025-09-03 | Adicionado suporte para `Tipo de Caso` opcional (default `"Principal"`) |
+| 1.1 | 2025-09-03 | Adicionado suporte para `CaseType` opcional (default `"Primary"`) |
 | 1.2 | 2025-09-03 | Ajuste no template para fixar 10 dígitos e padLeft correto |
 | 1.3 | 2025-09-03 | Correção do ScopeKey e sequência compartilhada por objeto ou record type |
 | 1.4 | 2025-09-03 | Classe de teste robusta para cobertura 100% |
@@ -85,10 +85,10 @@ O componente **Sequência Inteligente** tem como objetivo gerar nomes sequenciai
 ## 9. Exemplo de Flow de Reuso
 
 ### 9.1 Cenário
-- Objeto: `RG9_CasosDaOperacao__c`  
-- Record type: `"Espólio"`  
-- Prefixo: `"COP - "`  
-- Tipo de caso: `"Principal"`  
+- Objeto: `Generic_Object__c`  
+- Record type: `"ProcessTypeA"`  
+- Prefixo: `"PRC - "`  
+- Tipo de caso: `"Primary"`  
 
 Objetivo: Ao criar um registro, gerar automaticamente o nome sequencial.
 
@@ -96,20 +96,20 @@ Objetivo: Ao criar um registro, gerar automaticamente o nome sequencial.
 
 1. **Criar um Flow do tipo Record-Triggered**
    - Setup → Flow → New Flow → Record-Triggered Flow  
-   - Objeto: `RG9_CasosDaOperacao__c`  
+   - Objeto: `Generic_Object__c`  
    - Trigger: `A record is created`  
    - Configure para executar **Before Save** se quiser atualizar o Name antes do insert ou **After Save** se quiser chamar Apex Action.  
 
 2. **Adicionar Apex Action**
    - Arraste o elemento **Action** para o canvas.  
-   - Selecione a classe Apex: `RG9_SequenciaInteligenteService.generateSequence`  
+   - Selecione a classe Apex: `SequenceGeneratorService.generateSequence`  
    - Preencha os inputs:  
      | Input | Valor |
      |-------|-------|
-     | apiNameObject | `RG9_CasosDaOperacao__c` |
-     | apiNameRecType | `Espólio` (ou `"Default"` para todos os record types) |
-     | tipoDeCaso | `"Principal"` (opcional) |
-     | template | `"COP - "` |
+     | apiNameObject | `Generic_Object__c` |
+     | apiNameRecType | `ProcessTypeA` (ou `"Default"` para todos os record types) |
+     | caseType | `"Primary"` (opcional) |
+     | template | `"PRC - "` |
 
 3. **Mapear saída da Apex Action**
    - Output: `generatedName`  
@@ -128,8 +128,8 @@ Objetivo: Ao criar um registro, gerar automaticamente o nome sequencial.
    - Input `apiNameRecType = "Default"`  
    - Todos os registros do objeto usam a mesma sequência.
 
-2. **Casos filhos ou secundários**
-   - Input `tipoDeCaso = "Secundário"`  
+2. **Casos secundários**
+   - Input `caseType = "Secondary"`  
    - Permite gerar sequência separada sem criar record type adicional.
 
 3. **Troca de template**

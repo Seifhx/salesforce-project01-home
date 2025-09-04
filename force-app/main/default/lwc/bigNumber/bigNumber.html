@@ -1,0 +1,24 @@
+<template>
+    <div class="big-number-card" 
+         onmouseenter={handleMouseEnter} 
+         onmouseleave={handleMouseLeave}>
+
+        <!-- Número total -->
+        <template if:false={showBreakdown}>
+            <div class="big-number">{total}</div>
+            <p class="label">Total de Registros</p>
+        </template>
+
+        <!-- Quebra por SubJornada -->
+        <template if:true={showBreakdown}>
+            <div class="breakdown">
+                <template for:each={breakdown} for:item="item">
+                    <div key={item.label} class="breakdown-row">
+                        <span class="count">{item.count}</span>
+                        <span class="label">{item.label}</span>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,17 @@
+<template>
+    <lightning-card title="Tempo Restante">
+        <template if:true={timeLeft}>
+            <template if:true={timeLeft.expired}>
+                <div class="expired">⚠️ Prazo vencido</div>
+            </template>
+            <template if:false={timeLeft.expired}>
+                <div class="timer">
+                    <span>{timeLeft.days}d</span>
+                    <span>{timeLeft.hours}h</span>
+                    <span>{timeLeft.minutes}m</span>
+                    <span>{timeLeft.seconds}s</span>
+                </div>
+            </template>
+        </template>
+    </lightning-card>
+</template>

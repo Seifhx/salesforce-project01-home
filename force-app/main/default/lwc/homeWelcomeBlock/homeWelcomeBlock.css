@@ -1,48 +1,26 @@
 .welcome-card {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    padding: 1.5rem;
-    min-height: 250px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    animation: fadeSlideIn 0.8s ease-out forwards;
-    opacity: 0;
-    transform: translateY(20px);
-}
-
-.welcome-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-}
-
-.shortcut-links a {
-    color: #0070d2;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.shortcut-links a:hover {
-    text-decoration: underline;
-}
-
-@keyframes fadeSlideIn {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  background: rgb(255, 255, 255);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  animation: fadeSlideIn 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+  position: relative;
 }
 
 .page-title {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #000000; /* preto */
+  color: #000000;
   position: relative;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem; /* mais espaço para a mensagem */
   user-select: none;
-  padding-bottom: 6px; /* espaço para o sublinhado */
+  padding-bottom: 6px;
   overflow: hidden;
   text-align: center;
 }
@@ -52,7 +30,7 @@
   position: absolute;
   left: 0;
   bottom: 0;
-  height: 5px; /* um pouco mais grosso */
+  height: 5px;
   width: 100%;
   background: linear-gradient(
     90deg,
@@ -66,11 +44,46 @@
   border-radius: 3px;
 }
 
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes underlineFill {
   0%, 100% {
     background-position: 200% 0;
   }
   50% {
     background-position: 0% 0;
+  }
+}
+
+/* Mensagem rolante */
+.global-message-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  height: 25px;
+  margin-top: 10px;
+}
+
+.global-message {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100%;
+  animation: scrollMessage 12s linear infinite;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #d9534f; /* vermelho de aviso */
+}
+
+@keyframes scrollMessage {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
   }
 }
